@@ -11,14 +11,15 @@ public class BankStatementAnalyzer {
     private String analyzer(String stringInput, BankStatementParser bankStatementParser) throws IOException {
         String results = "Welcome to Bank Statement Analyzer \n";
 
+        List<BankTransaction> bankTransactionList = bankStatementParser.parseToList(stringInput);
+        BankStatementProcessor bankStatementProcessor = new BankStatementProcessor(bankTransactionList);
 
-        List<BankStatement> bankStatementList = bankStatementParser.parseToList(stringInput);
-        BankStatementProcessor bankStatementProcessor = new BankStatementProcessor(bankStatementList);
-
-        results += "Total Amount: " + bankStatementProcessor.getTotalAmount() + "\n";
-        results += "Total Amount for January: " + bankStatementProcessor.getTotalInMonth(Month.JANUARY) + "\n";
-        results += "Total Amount for February: " + bankStatementProcessor.getTotalInMonth(Month.FEBRUARY) + "\n";
-        results += "Total Amount for Rent: " + bankStatementProcessor.getTotalbyCategory("Rent") + "\n";
+        results += "Total Amount: " + bankStatementProcessor.calculateTotalAmount() + "\n";
+        results += "Total Amount for January: " + bankStatementProcessor.calculateTotalInMonth(Month.JANUARY) + "\n";
+        results += "Total Amount for February: " + bankStatementProcessor.calculateTotalInMonth(Month.FEBRUARY) + "\n";
+        results += "Total Amount for Rent: " + bankStatementProcessor.calculateTotalbyCategory("Rent") + "\n";
+        results += "Bank Transactions filter by \"Tesco\":\n";
+        results += bankStatementProcessor.getTransactionsByTesco() + "";
         results += "--- End of line ---";
         return results;
     }

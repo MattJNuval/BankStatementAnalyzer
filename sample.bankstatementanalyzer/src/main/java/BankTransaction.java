@@ -1,13 +1,13 @@
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class BankStatement {
+public class BankTransaction {
 
     private LocalDate date;
     private double amount;
     private String description;
 
-    public BankStatement(LocalDate date, double amount, String description) {
+    public BankTransaction(LocalDate date, double amount, String description) {
         this.date = date;
         this.amount = amount;
         this.description = description;
@@ -38,7 +38,7 @@ public class BankStatement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BankStatement that = (BankStatement) o;
+        BankTransaction that = (BankTransaction) o;
         return amount == that.amount &&
                 Objects.equals(date, that.date) &&
                 Objects.equals(description, that.description);

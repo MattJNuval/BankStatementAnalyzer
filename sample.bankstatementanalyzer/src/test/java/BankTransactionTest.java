@@ -7,7 +7,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BankStatementTest {
+public class BankTransactionTest {
 
     @Test
     public void shouldParseOneCorrectLine() throws IOException {
@@ -17,16 +17,21 @@ public class BankStatementTest {
         lineList.add(line);
 
         BankStatementParser bankStatementParser = new BankStatementCSVParser();
-        List<BankStatement> bankStatementList = bankStatementParser.parser(lineList);
-        BankStatement actual = bankStatementList.get(0);
+        List<BankTransaction> bankTransactionList = bankStatementParser.parser(lineList);
+        BankTransaction actual = bankTransactionList.get(0);
 
-        BankStatement expected = new BankStatement(LocalDate.of(2020, Month.APRIL, 10), 3000, "Costco");
+        BankTransaction expected = new BankTransaction(LocalDate.of(2020, Month.APRIL, 10), 3000, "Costco");
 
         double tolerance = 0.0d;
 
         Assert.assertEquals(expected.getDate(), actual.getDate());
         Assert.assertEquals(expected.getAmount(), actual.getAmount(), tolerance);
         Assert.assertEquals(expected.getDescription(), actual.getDescription());
+    }
+
+    @Test
+    public void checkBankTransactionFilter() {
+
     }
 
 }
