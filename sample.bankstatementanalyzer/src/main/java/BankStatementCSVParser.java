@@ -1,4 +1,4 @@
-import jdk.vm.ci.meta.Local;
+import jdk.nashorn.internal.ir.CatchNode;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +16,9 @@ public class BankStatementCSVParser implements BankStatementParser {
     private final static DateTimeFormatter DATE_PATTERN = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     @Override
-    public List<BankStatement> parseToList(String stringInput) {
+    public List<BankTransaction> parseToList(String fileName) {
         try {
-            final Path path = Paths.get(RESOURCES + stringInput);
+            final Path path = Paths.get(RESOURCES + fileName);
             final List<String> lines = Files.readAllLines(path);
             return parser(lines);
         } catch (IOException e) {
@@ -28,9 +29,21 @@ public class BankStatementCSVParser implements BankStatementParser {
     }
 
     @Override
-    public List<BankStatement> parser(List<String> lines) {
+    public List<BankTransaction> parser(List<String> lines) {
 
-        List<BankStatement> bankStatementList = new ArrayList<>();
+        Validator validator = new Validator(lines);
+        Notification notification = validator.validate();
+        if(notification.hasErrors()) {
+            String results = "Total Errors: " + notification.getErrors().size() + "\n";
+            int counter = 1;
+            for(final String error : notification.getErrors()) {
+                results += counter + ". " + error + "\n";
+                counter++;
+            }
+            throw new Error(results);
+        }
+
+        List<BankTransaction> bankTransactionList = new ArrayList<>();
         for(final String line : lines) {
             final String column[] = line.split(",");
 
@@ -38,11 +51,9 @@ public class BankStatementCSVParser implements BankStatementParser {
             double amount = Double.parseDouble(column[1]);
             String description = column[2];
 
-            BankStatement bankStatement = new BankStatement(date, amount, description);
-            bankStatementList.add(bankStatement);
+            BankTransaction bankTransaction = new BankTransaction(date, amount, description);
+            bankTransactionList.add(bankTransaction);
         }
-        return bankStatementList;
-
+        return bankTransactionList;
     }
-
 }
