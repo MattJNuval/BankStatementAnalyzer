@@ -6,6 +6,7 @@ public class HtmlExporter implements Exporter {
         result += "<html lang='en'";
         result += "<head><title>Bank Transaction Report</title></head>";
         result += "<body>";
+        result += "<h2>Bank Statement Summary</h2>";
         result += "<ul>";
         result += "<li><strong>The sum is</strong>: " + summaryStatistics.getSum() + "</li>";
         result += "<li><strong>The average is</strong>: " + summaryStatistics.getAverage() + "</li>";

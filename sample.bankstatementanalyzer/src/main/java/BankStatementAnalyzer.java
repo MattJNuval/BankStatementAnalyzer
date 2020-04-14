@@ -9,18 +9,20 @@ public class BankStatementAnalyzer {
     }
 
     private String analyzer(String stringInput, BankStatementParser bankStatementParser) throws IOException {
-        String results = "Welcome to Bank Statement Analyzer \n";
+        String results = "Welcome to Bank Statement Analyzer \n\n".toUpperCase();
 
         List<BankTransaction> bankTransactionList = bankStatementParser.parseToList(stringInput);
         BankStatementProcessor bankStatementProcessor = new BankStatementProcessor(bankTransactionList);
+        SummaryStatistics summaryStatistics = bankStatementProcessor.calculateStatistics();
 
+        results += bankStatementProcessor.printAllTransactions() +"\n";
         results += "Total Amount: " + bankStatementProcessor.calculateTotalAmount() + "\n";
-        results += "Total Amount for January: " + bankStatementProcessor.calculateTotalInMonth(Month.JANUARY) + "\n";
-        results += "Total Amount for February: " + bankStatementProcessor.calculateTotalInMonth(Month.FEBRUARY) + "\n";
-        results += "Total Amount for Rent: " + bankStatementProcessor.calculateTotalbyCategory("Rent") + "\n";
-        results += "Bank Transactions filter by \"Tesco\":\n";
-        results += bankStatementProcessor.getTransactionsByTesco() + "";
-        results += "--- End of line ---";
+        results += "Max: " + summaryStatistics.getMax() + "\n";
+        results += "Min: " + summaryStatistics.getMin() + "\n";
+        results += "Average: " + summaryStatistics.getAverage() + "";
+
+
+
         return results;
     }
 

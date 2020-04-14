@@ -32,6 +32,26 @@ public class BankStatementProcessor {
                 bankTransaction.getDescription().equals(category) ? accumulator + bankTransaction.getAmount() : accumulator);
     }
 
+    public SummaryStatistics calculateStatistics() {
+        double max = 0;
+        double min = 0;
+        double average = 0;
+        double sum = 0;
+        for(final BankTransaction bankTransaction : bankTransactionList) {
+            if(bankTransaction.getAmount() >= max) {
+                max = bankTransaction.getAmount();
+            } else if(bankTransaction.getAmount() <= min) {
+                min = bankTransaction.getAmount();
+            }
+            average += bankTransaction.getAmount();
+        }
+        average /= bankTransactionList.size();
+        sum = summarizeTransaction((accumulator, bankTransaction) -> accumulator + bankTransaction.getAmount());
+        SummaryStatistics summaryStatistics = new SummaryStatistics(sum, max, min, average);
+        return summaryStatistics;
+    }
+
+
     public List<BankTransaction> filterTransactionsBy(final BankTransactionFilter bankTransactionFilter) {
         List<BankTransaction> results = new ArrayList<>();
         for(final BankTransaction bankTransaction : bankTransactionList) {
@@ -42,16 +62,23 @@ public class BankStatementProcessor {
         return results;
     }
 
+    public String printAllTransactions() {
+        String result = "DATE | AMOUNT | CATEGORY\n";
+        for(final BankTransaction bankTransaction: bankTransactionList) {
+            result += bankTransaction.getDate() + " | " + bankTransaction.getAmount() + " | " + bankTransaction.getDescription() + "\n";
+        }
+        return result;
+    }
 
-    public String getTransactionsByTesco() {
-        String results = "";
-        List<BankTransaction> bankTransactionListByTesco = filterTransactionsBy(bankTransaction -> bankTransaction.getDescription().equals("Tesco"));
-        for(final BankTransaction bankTransaction : bankTransactionListByTesco) {
-            results += "{\"Date\":\"" + bankTransaction.getDate() +
-                    "\",\"Amount\":\"" + bankTransaction.getAmount() +
-                    "\",\"Category\":\"" + bankTransaction.getDescription() + "\"}\n";
+    public String printFilteredTransactions(final BankTransactionFilter bankTransactionFilter) {
+        String results = "DATE | AMOUNT | CATEGORY\n";
+        List<BankTransaction> bankTransactionListByCategory = filterTransactionsBy(bankTransactionFilter);
+        for(final BankTransaction bankTransaction : bankTransactionListByCategory) {
+            results += bankTransaction.getDate() + " | " + bankTransaction.getAmount() +" | " + bankTransaction.getDescription() +"\n";
         }
         return results;
     }
+
+
 
 }
